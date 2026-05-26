@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenClaw 安装指南 - 快速上手指南</title>
+<style>
+/* ========== CSS Reset & Variables ========== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg-primary: #0a0e1a;
+  --bg-secondary: #111827;
+  --bg-card: rgba(17, 24, 39, 0.7);
+  --bg-card-hover: rgba(30, 41, 59, 0.8);
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --accent-blue: #3b82f6;
+  --accent-blue-glow: rgba(59, 130, 246, 0.3);
+  --accent-cyan: #06b6d4;
+  --accent-cyan-glow: rgba(6, 182, 212, 0.3);
+  --accent-green: #10b981;
+  --accent-purple: #8b5cf6;
+  --accent-orange: #f97316;
+  --border-color: rgba(148, 163, 184, 0.1);
+  --border-glow: rgba(59, 130, 246, 0.3);
+  --gradient-blue: linear-gradient(135deg, #3b82f6, #06b6d4);
+  --gradient-hero: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.3);
+  --shadow-glow: 0 0 30px rgba(59, 130, 246, 0.15);
+  --radius: 12px;
+  --radius-lg: 20px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ========== Scrollbar ========== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--accent-blue); border-radius: 3px; }
+
+/* ========== Navigation ========== */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: rgba(10, 14, 26, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-color);
+  transition: var(--transition);
+}
+.nav.scrolled { background: rgba(10, 14, 26, 0.95); }
+.nav-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.8rem 2rem;
+}
+.nav-logo {
+  font-size: 1.1rem; font-weight: 700;
+  background: var(--gradient-blue);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.nav-links { display: flex; gap: 0.5rem; list-style: none; }
+.nav-links a {
+  color: var(--text-secondary); text-decoration: none;
+  padding: 0.4rem 0.8rem; border-radius: 8px;
+  font-size: 0.85rem; transition: var(--transition);
+}
+.nav-links a:hover { color: var(--text-primary); background: rgba(59, 130, 246, 0.1); }
+.nav-toggle { display: none; background: none; border: none; color: var(--text-primary); font-size: 1.5rem; cursor: pointer; }
+
+/* ========== Hero Section ========== */
+.hero {
+  position: relative; min-height: 60vh;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background: url('assets/openclaw-install-hero.jpg') center/cover no-repeat;
+  opacity: 0.5;
+}
+.hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(10,14,26,0.3) 0%, rgba(10,14,26,0.8) 70%, var(--bg-primary) 100%);
+}
+.hero-content {
+  position: relative; z-index: 2; text-align: center;
+  max-width: 900px; padding: 2rem;
+  animation: fadeInUp 1s ease-out;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3);
+  padding: 0.4rem 1rem; border-radius: 50px;
+  font-size: 0.8rem; color: var(--accent-blue);
+  margin-bottom: 1.5rem;
+}
+.hero-badge::before {
+  content: ''; width: 6px; height: 6px;
+  background: var(--accent-green); border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+.hero h1 {
+  font-size: clamp(2rem, 5vw, 3rem); font-weight: 800;
+  line-height: 1.2; margin-bottom: 1rem;
+  background: var(--gradient-blue);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-subtitle {
+  font-size: clamp(1rem, 2vw, 1.1rem);
+  color: var(--text-secondary); max-width: 650px; margin: 0 auto 2rem;
+}
+.hero-cta {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: var(--gradient-blue);
+  color: white; padding: 0.8rem 2rem; border-radius: 50px;
+  text-decoration: none; font-weight: 600; font-size: 0.95rem;
+  transition: var(--transition); border: none; cursor: pointer;
+}
+.hero-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(59, 130, 246, 0.4); }
+
+/* ========== Floating Particles ========== */
+.particles {
+  position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+}
+.particle {
+  position: absolute; width: 3px; height: 3px;
+  background: rgba(59, 130, 246, 0.5); border-radius: 50%;
+  animation: float linear infinite;
+}
+
+/* ========== Section Common ========== */
+.section {
+  max-width: 1200px; margin: 0 auto;
+  padding: 4rem 2rem;
+}
+.section-header {
+  text-align: center; margin-bottom: 3rem;
+}
+.section-label {
+  display: inline-block; font-size: 0.75rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 2px;
+  color: var(--accent-blue); margin-bottom: 0.8rem;
+}
+.section-title {
+  font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 700;
+  margin-bottom: 0.8rem;
+}
+.section-desc {
+  color: var(--text-secondary); max-width: 600px; margin: 0 auto;
+  font-size: 0.95rem;
+}
+
+/* ========== OS Selector ========== */
+.os-selector {
+  display: flex; justify-content: center; gap: 1rem; margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+}
+.os-btn {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.8rem 1.5rem; border-radius: 12px;
+  background: var(--bg-card); border: 1px solid var(--border-color);
+  color: var(--text-secondary); font-size: 0.9rem; font-weight: 600;
+  cursor: pointer; transition: var(--transition);
+}
+.os-btn:hover { border-color: var(--border-glow); color: var(--text-primary); }
+.os-btn.active {
+  background: var(--gradient-blue); color: white;
+  border-color: transparent; box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+}
+.os-btn .icon { font-size: 1.2rem; }
+
+/* ========== OS Panels ========== */
+.os-panel { display: none; animation: fadeIn 0.4s ease; }
+.os-panel.active { display: block; }
+
+/* ========== Step Cards ========== */
+.step-container {
+  display: flex; flex-direction: column; gap: 1.5rem;
+}
+.step-card {
+  background: var(--bg-card); border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg); padding: 2rem;
+  transition: var(--transition); position: relative;
+  overflow: hidden; opacity: 0; transform: translateX(-30px);
+}
+.step-card.visible { opacity: 1; transform: translateX(0); }
+.step-card::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+  background: var(--gradient-blue);
+}
+.step-card:hover {
+  border-color: var(--border-glow);
+  box-shadow: var(--shadow-glow);
+  transform: translateY(-2px);
+}
+.step-header {
+  display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;
+}
+.step-number {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: var(--gradient-blue); color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 1rem; flex-shrink: 0;
+}
+.step-title { font-size: 1.2rem; font-weight: 700; }
+.step-desc { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.2rem; line-height: 1.8; }
+
+/* ========== Code Blocks ========== */
+.code-block {
+  background: #0d1117; border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 10px; padding: 1rem 1.2rem; margin: 0.8rem 0;
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 0.85rem; line-height: 1.8; overflow-x: auto;
+  color: #c9d1d9; position: relative;
+}
+.code-block .comment { color: #8b949e; }
+.code-block .cmd { color: #79c0ff; }
+.code-block .string { color: #a5d6ff; }
+.code-block .keyword { color: #ff7b72; }
+.copy-btn {
+  position: absolute; top: 0.5rem; right: 0.5rem;
+  background: rgba(148, 163, 184, 0.1); border: 1px solid var(--border-color);
+  color: var(--text-muted); padding: 0.3rem 0.6rem; border-radius: 6px;
+  font-size: 0.7rem; cursor: pointer; transition: var(--transition);
+}
+.copy-btn:hover { background: rgba(148, 163, 184, 0.2); color: var(--text-primary); }
+
+/* ========== Info Cards ========== */
+.info-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem; margin-top: 1rem;
+}
+.info-card {
+  background: rgba(59, 130, 246, 0.05);
+  border: 1px solid rgba(59, 130, 246, 0.15);
+  border-radius: 10px; padding: 1rem;
+  transition: var(--transition);
+}
+.info-card:hover { background: rgba(59, 130, 246, 0.08); transform: translateY(-2px); }
+.info-card-title { font-size: 0.85rem; font-weight: 600; color: var(--accent-blue); margin-bottom: 0.4rem; }
+.info-card-text { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5; }
+
+/* ========== Warning/Tip Boxes ========== */
+.tip-box {
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 10px; padding: 1rem 1.2rem;
+  margin: 1rem 0; display: flex; gap: 0.8rem;
+}
+.tip-box.warning {
+  background: rgba(249, 115, 22, 0.08);
+  border-color: rgba(249, 115, 22, 0.2);
+}
+.tip-box.error {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.2);
+}
+.tip-icon { font-size: 1.2rem; flex-shrink: 0; }
+.tip-content { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; }
+.tip-content strong { color: var(--text-primary); }
+
+/* ========== Platform Grid ========== */
+.platform-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.8rem; margin: 1rem 0;
+}
+.platform-item {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.6rem 0.8rem; border-radius: 8px;
+  background: rgba(148, 163, 184, 0.05);
+  font-size: 0.8rem; color: var(--text-secondary);
+  transition: var(--transition);
+}
+.platform-item:hover { background: rgba(148, 163, 184, 0.1); }
+
+/* ========== Quick Install Section ========== */
+.quick-install {
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+}
+.quick-install-card {
+  background: var(--bg-card); border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg); padding: 2rem;
+  text-align: center; max-width: 700px; margin: 0 auto;
+}
+.quick-install-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem; }
+.quick-install-desc { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+/* ========== Tab Switcher for Install Methods ========== */
+.method-tabs {
+  display: flex; justify-content: center; gap: 0.3rem;
+  background: rgba(0, 0, 0, 0.3); border-radius: 12px;
+  padding: 0.3rem; margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+.method-tab {
+  padding: 0.5rem 1rem; border: none; border-radius: 10px;
+  background: transparent; color: var(--text-secondary);
+  font-size: 0.8rem; font-weight: 500; cursor: pointer;
+  transition: var(--transition);
+}
+.method-tab:hover { color: var(--text-primary); }
+.method-tab.active {
+  background: var(--gradient-blue);
+  color: white; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+.method-panel { display: none; text-align: left; }
+.method-panel.active { display: block; animation: fadeIn 0.4s ease; }
+
+/* ========== China Mirror Section ========== */
+.mirror-section { margin-top: 2rem; }
+.mirror-title { font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: var(--accent-orange); }
+.mirror-options {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+.mirror-card {
+  background: rgba(249, 115, 22, 0.05);
+  border: 1px solid rgba(249, 115, 22, 0.15);
+  border-radius: 10px; padding: 1.2rem;
+  transition: var(--transition);
+}
+.mirror-card:hover { border-color: rgba(249, 115, 22, 0.3); transform: translateY(-2px); }
+.mirror-card-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem; }
+.mirror-card-desc { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.8rem; line-height: 1.5; }
+
+/* ========== FAQ Section ========== */
+.faq-item {
+  background: var(--bg-card); border: 1px solid var(--border-color);
+  border-radius: var(--radius); margin-bottom: 0.8rem;
+  overflow: hidden; transition: var(--transition);
+}
+.faq-item:hover { border-color: var(--border-glow); }
+.faq-question {
+  width: 100%; display: flex; align-items: center; justify-content: space-between;
+  background: transparent; border: none; padding: 1rem 1.2rem;
+  color: var(--text-primary); font-size: 0.9rem; font-weight: 600;
+  cursor: pointer; text-align: left;
+}
+.faq-question .arrow { transition: transform 0.3s; color: var(--text-muted); }
+.faq-question.active .arrow { transform: rotate(180deg); }
+.faq-answer {
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.4s ease-out, padding 0.3s;
+  padding: 0 1.2rem;
+}
+.faq-answer.open { max-height: 500px; padding: 0 1.2rem 1.2rem; }
+.faq-answer p { color: var(--text-secondary); font-size: 0.85rem; line-height: 1.7; margin-bottom: 0.5rem; }
+.faq-answer p:last-child { margin-bottom: 0; }
+
+/* ========== Progress Indicator ========== */
+.progress-indicator {
+  display: flex; justify-content: center; gap: 0.5rem; margin: 2rem 0;
+}
+.progress-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--border-color); transition: var(--transition);
+}
+.progress-dot.active { background: var(--accent-blue); box-shadow: 0 0 10px var(--accent-blue-glow); }
+.progress-dot.completed { background: var(--accent-green); }
+
+/* ========== Verification Section ========== */
+.verify-box {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(6, 182, 212, 0.08));
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: var(--radius-lg); padding: 2rem;
+  text-align: center; margin-top: 2rem;
+}
+.verify-box h3 { font-size: 1.2rem; margin-bottom: 1rem; }
+.verify-commands {
+  display: flex; flex-direction: column; gap: 0.8rem;
+  max-width: 500px; margin: 0 auto;
+}
+
+/* ========== Back to Top ========== */
+.back-top {
+  position: fixed; bottom: 2rem; right: 2rem; z-index: 999;
+  width: 44px; height: 44px; border-radius: 12px;
+  background: var(--gradient-blue);
+  color: white; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; opacity: 0; transform: translateY(20px);
+  transition: var(--transition); box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+}
+.back-top.visible { opacity: 1; transform: translateY(0); }
+.back-top:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(59, 130, 246, 0.5); }
+
+/* ========== Footer ========== */
+.footer {
+  text-align: center; padding: 2rem;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-muted); font-size: 0.8rem;
+}
+
+/* ========== Animations ========== */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.5); }
+}
+@keyframes float {
+  0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .nav-links.open {
+    display: flex; flex-direction: column;
+    position: absolute; top: 100%; left: 0; right: 0;
+    background: rgba(10, 14, 26, 0.95);
+    padding: 1rem; border-bottom: 1px solid var(--border-color);
+  }
+  .nav-toggle { display: block; }
+  .section { padding: 3rem 1.2rem; }
+  .step-card { padding: 1.5rem; }
+  .os-btn { padding: 0.6rem 1rem; font-size: 0.85rem; }
+  .info-grid, .mirror-options { grid-template-columns: 1fr; }
+}
+
+/* ========== Progress Bar ========== */
+.progress-bar {
+  position: fixed; top: 0; left: 0; height: 3px; z-index: 1001;
+  background: var(--gradient-blue);
+  transition: width 0.1s linear;
+}
+</style>
+</head>
+<body>
+
+<!-- Progress Bar -->
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- Navigation -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <div class="nav-logo">🔧 OpenClaw 安装指南</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">☰</button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#quick-install">快速安装</a></li>
+      <li><a href="#macos">macOS</a></li>
+      <li><a href="#windows">Windows</a></li>
+      <li><a href="#china">国内镜像</a></li>
+      <li><a href="#faq">常见问题</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero" id="top">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="particles" id="particles"></div>
+  <div class="hero-content">
+    <div class="hero-badge">官方推荐 · 2025 最新版</div>
+    <h1>OpenClaw 安装指南</h1>
+    <p class="hero-subtitle">
+      从零开始，5-10 分钟完成 OpenClaw 的全新安装与配置。支持 Windows、macOS、Linux 全平台，含国内镜像加速方案。
+    </p>
+    <a href="#quick-install" class="hero-cta">开始安装 ↓</a>
+  </div>
+</section>
+
+<!-- Quick Install Section -->
+<section class="section quick-install" id="quick-install">
+  <div class="section-header">
+    <div class="section-label">Step 0</div>
+    <h2 class="section-title">一键快速安装</h2>
+    <p class="section-desc">官方推荐的最简安装方式，自动检测系统并完成所有配置</p>
+  </div>
+
+  <div class="quick-install-card">
+    <div class="os-selector">
+      <button class="os-btn active" onclick="switchOS('windows')">
+        <span class="icon">🪟</span> Windows
+      </button>
+      <button class="os-btn" onclick="switchOS('macos')">
+        <span class="icon">🍎</span> macOS
+      </button>
+      <button class="os-btn" onclick="switchOS('linux')">
+        <span class="icon">🐧</span> Linux
+      </button>
+    </div>
+
+    <!-- Windows Panel -->
+    <div class="os-panel active" id="panel-windows">
+      <p class="quick-install-desc">以管理员身份运行 PowerShell，粘贴以下命令：</p>
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">复制</button>
+        <span class="cmd">iwr</span> -useb https://openclaw.ai/install.ps1 | <span class="cmd">iex</span>
+      </div>
+      <div class="tip-box">
+        <span class="tip-icon">⚠️</span>
+        <div class="tip-content">
+          <strong>权限提示：</strong>Windows 一定要用管理员 PowerShell 运行，否则可能报错。右键点击开始菜单 → 选择 "Windows PowerShell (管理员)" 或 "终端 (管理员)"。
+        </div>
+      </div>
+    </div>
+
+    <!-- macOS Panel -->
+    <div class="os-panel" id="panel-macos">
+      <p class="quick-install-desc">打开 Terminal（终端），粘贴以下命令：</p>
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">复制</button>
+        <span class="cmd">curl</span> -fsSL https://openclaw.ai/install.sh | <span class="cmd">bash</span>
+      </div>
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-card-title">🍺 推荐先装 Homebrew</div>
+          <div class="info-card-text">很多 Mac 用户反馈先装 Homebrew 可以避免权限或依赖问题</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-title">📦 自动安装 Node.js</div>
+          <div class="info-card-text">如果没有 Node.js，脚本会自动安装（推荐 Node 24）</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Linux Panel -->
+    <div class="os-panel" id="panel-linux">
+      <p class="quick-install-desc">打开 Terminal，粘贴以下命令：</p>
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">复制</button>
+        <span class="cmd">curl</span> -fsSL https://openclaw.ai/install.sh | <span class="cmd">bash</span>
+      </div>
+      <div class="tip-box">
+        <span class="tip-icon">💡</span>
+        <div class="tip-content">
+          脚本会自动检测你的系统，如果没有 Node.js 会帮你安装，全新安装最新版 OpenClaw，安装完成后自动启动 onboarding（向导配置）。
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- macOS Detailed Section -->
+<section class="section" id="macos">
+  <div class="section-header">
+    <div class="section-label">macOS 详细教程</div>
+    <h2 class="section-title">🍎 Mac Mini / MacBook 安装指南</h2>
+    <p class="section-desc">适合新手的超详细分步安装教程（Apple Silicon M1/M2/M3/M4 通用）</p>
+  </div>
+
+  <div class="step-container">
+    <div class="step-card" data-animate>
+      <div class="step-header">
+        <div class="step-number">1</div>
+        <h3 class="step-title">打开 Terminal（终端）</h3>
+      </div>
+      <p class="step-desc">
+        按键盘上的 <strong>Command + 空格</strong>，弹出 Spotlight 搜索。输入 "Terminal"，然后按回车打开。Terminal 窗口会弹出来，这就是我们接下来所有操作的地方。
+      </p>
+    </div>
+
+    <div class="step-card" data-animate>
+      <div class="step-header">
+        <div class="step-number">2</div>
+        <h3 class="step-title">（推荐）先安装 Homebrew</h3>
+      </div>
+      <p class="step-desc">
+        虽然官方一键脚本会自动处理，但很多 Mac 用户反馈先装 Homebrew 可以避免一些权限或依赖问题。
+      </p>
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">复制</button>
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      </div>
+      <div class="tip-box">
+        <span class="tip-icon">🔑</span>
+        <div class="tip-content">
+          执行过程中可能会让你输入 Mac 的登录密码（输入时屏幕不会显示字符，正常），输入完按回车。安装完后，<strong>关闭 Terminal 窗口，再重新打开一次</strong>（让环境变量生效）。
+        </div>
+      </div>
+      <p class="step-desc">验证 Homebrew 安装成功：</p>
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">复制</button>
+        <span class="cmd">brew</span> --version
+      </div>
+    </div>
+
+    <div class="step-card" data-animate>
+      <div class="step-header">
+        <div class="step-number">3</div>
+        <h3 class="step-title">安装 Node.js（推荐用 Homebrew）</h3>
+      </div>
+      <p class="step-desc">
+        OpenClaw 需要 Node.js 22 或更高版本（官方推荐 Node 24）。
+      </p>
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">复制</button>
+        <span class="cmd">brew</span> install node
+      </div>
+      <p class="step-desc">安装完验证版本：</p>
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">复制</button>
+        <span class="cmd">node</span> --version<br>
+        <span class="cmd">npm</span> --version
+      </div>
+      <div class="tip-box">
+        <span class="tip-icon">💡</span>
+        <div class="tip-content">
+          应该看到 v22.x.x 或 v24.x.x 以上。如果脚本自己装 Node 也可以，但提前装好更稳。
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card" data-animate>
+      <div class="step-header">
+        <div class="step-number">4</div>
+        <h3 class="step-title">执行官方一键全新安装</h3>
+      </div>
+      <p class="step-desc">
+        直接复制下面这行命令，粘贴到 Terminal 后按回车：
+      </p>
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">复制</button>
+        <span class="cmd">curl</span> -fsSL https://openclaw.ai/install.sh | <span class="cmd">bash</span>
+      </div>
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-card-title">🔍 自动检测</div>
+          <div class="info-card-text">检查并安装 Node.js（如果已装则跳过）</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-title">📥 全局安装</div>
+          <div class="info-card-text">安装最新版 OpenClaw CLI</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-title">🚀 自动启动</div>
+          <div class="info-card-text">自动启动 Onboarding（配置向导）</div>
+        </div>
+      </div>
+      <p class="step-desc">安装过程中可能会弹出几次权限请求（比如输入密码），正常输入即可。等待看到 "Installation finished successfully!" 或直接进入配置界面。</p>
+    </div>
+
+    <div class="step-card" data-animate>
+      <div class="step-header">
+        <div class="step-number">5</div>
+        <h3 class="step-title">完成 Onboarding 配置向导</h3>
+      </div>
+      <p class="step-desc">
+        安装结束后，通常会自动进入配置向导。如果没有自动弹出，可以手动启动：
+      </p>
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">复制</button>
+        <span class="cmd">openclaw</span> onboard<br>
+        <span class="comment"># 或快速向导</span><br>
+        <span class="cmd">openclaw</span> onboard --flow quickstart
+      </div>
+      <p class="step-desc">向导里主要会让你设置：</p>
+      <div class="platform-grid">
+        <div class="platform-item">🤖 AI 模型提供商</div>
+        <div class="platform-item">💬 聊天渠道</div>
+        <div class="platform-item">🌐 Gateway 后台服务</div>
+        <div class="platform-item">⚙️ 其他基础设置</div>
+      </div>
+      <div class="tip-box">
+        <span class="tip-icon">📝</span>
+        <div class="tip-content">
+          需要准备以下任意一个 API Key：OpenAI（ChatGPT）、Anthropic（Claude）、Grok（xAI）、通义千问（Qwen）等
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card" data-animate>
+      <div class="step-header">
+        <div class="step-number">6</div>
+        <h3 class="step-title">验证安装成功</h3>
+      </div>
+      <p class="step-desc">安装和配置完成后，验证 CLI 安装成功：</p>
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">复制</button>
+        <span class="cmd">openclaw</span> --version
+      </div>
+      <p class="step-desc">启动 Gateway（后台服务）：</p>
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">复制</button>
+        <span class="comment"># 手动启动</span><br>
+        <span class="cmd">openclaw</span> gateway start<br><br>
+        <span class="comment"># 或用守护进程方式（开机自启推荐）</span><br>
+        <span class="cmd">openclaw</span> gateway install
+      </div>
+    </div>
+
+    <div class="step-card" data-animate>
+      <div class="step-header">
+        <div class="step-number">7</div>
+        <h3 class="step-title">启动并测试</h3>
+      </div>
+      <p class="step-desc">
+        如果你安装了 macOS App（部分用户会看到），可以直接打开 OpenClaw.app 来管理。否则，在浏览器访问本地 Gateway 地址（向导里通常会告诉你，比如 http://localhost:xxxx）。用你配置的聊天渠道（Telegram / Web）给你的 AI 发送第一条消息测试。
+      </p>
+    </div>
+  </div>
+
+  <!-- macOS FAQ -->
+  <div style="margin-top: 3rem;">
+    <h3 style="text-align: center; margin-bottom: 1.5rem;">🛠️ Mac Mini 专属常见问题</h3>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFAQ(this)">
+        <span>权限错误 / sudo 提示</span>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="faq-answer">
+        <p>如果提示需要 sudo，尝试在命令前加 sudo，或确保你的用户是管理员。</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFAQ(this)">
+        <span>命令 not found</span>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="faq-answer">
+        <p>安装完后关闭 Terminal，重新打开一次。</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFAQ(this)">
+        <span>Node 版本不对</span>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="faq-answer">
+        <p>运行 <code>brew upgrade node</code> 更新。</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFAQ(this)">
+        <span>安装卡住</span>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="faq-answer">
+        <p>按 Control + C 中断，然后重新运行安装命令。</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFAQ(this)">
+        <span>想完全重置</span>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="faq-answer">
+        <p>再次删除文件夹：<code>rm -rf ~/.openclaw</code></p>
+        <p>如果一键脚本失败，可以手动安装：<code>npm install -g openclaw@latest && openclaw onboard</code></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Windows Section -->
+<section class="section" id="windows" style="background: var(--bg-secondary); max-width: 100%; padding-left: calc((100% - 1200px)/2 + 2rem); padding-right: calc((100% - 1200px)/2 + 2rem);">
+  <div class="section-header">
+    <div class="section-label">Windows 安装</div>
+    <h2 class="section-title">🪟 Windows 安装指南</h2>
+    <p class="section-desc">原生支持 Windows，PowerShell 一键安装</p>
+  </div>
+
+  <div class="step-container">
+    <div class="step-card" data-animate>
+      <div class="step-header">
+        <div class="step-number">1</div>
+        <h3 class="step-title">准备工作（管理员权限）</h3>
+      </div>
+      <p class="step-desc">
+        右键点击开始菜单 → 选择 <strong>"Windows PowerShell (管理员)"</strong> 或 <strong>"终端 (管理员)"</strong>。
+      </p>
+      <div class="tip-box warning">
+        <span class="tip-icon">⚠️</span>
+        <div class="tip-content">
+          <strong>重要：</strong>Windows 一定要用管理员 PowerShell 运行，否则可能报错。
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card" data-animate>
+      <div class="step-header">
+        <div class="step-number">2</div>
+        <h3 class="step-title">执行全新安装命令</h3>
+      </div>
+      <p class="step-desc">复制下面命令，直接粘贴并回车运行：</p>
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">复制</button>
+        <span class="cmd">iwr</span> -useb https://openclaw.ai/install.ps1 | <span class="cmd">iex</span>
+      </div>
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-card-title">🔍 自动检测系统</div>
+          <div class="info-card-text">智能识别 Windows 版本</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-title">📦 自动安装 Node.js</div>
+          <div class="info-card-text">如果没有 Node.js 会帮你安装</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-title">🚀 自动启动向导</div>
+          <div class="info-card-text">安装完成后自动进入配置</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card" data-animate>
+      <div class="step-header">
+        <div class="step-number">3</div>
+        <h3 class="step-title">完成 Onboarding 配置</h3>
+      </div>
+      <p class="step-desc">
+        安装结束后，会自动进入配置向导（或手动运行 <code>openclaw onboard</code>）：
+      </p>
+      <div class="platform-grid">
+        <div class="platform-item">✅ 选择 QuickStart（快速开始）</div>
+        <div class="platform-item">✅ 配置 AI 模型 API Key</div>
+        <div class="platform-item">✅ 设置聊天渠道</div>
+        <div class="platform-item">✅ 配置 Gateway</div>
+      </div>
+      <p class="step-desc">整个过程通常 <strong>5-10 分钟</strong>就能完成。</p>
+    </div>
+
+    <div class="step-card" data-animate>
+      <div class="step-header">
+        <div class="step-number">4</div>
+        <h3 class="step-title">验证与启动</h3>
+      </div>
+      <p class="step-desc">安装完成后，运行以下命令检查：</p>
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">复制</button>
+        <span class="cmd">openclaw</span> --version
+      </div>
+      <p class="step-desc">如果想手动启动 Gateway（后台服务）：</p>
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">复制</button>
+        <span class="cmd">openclaw</span> gateway start
+      </div>
+      <p class="step-desc">或者用快速向导重新配置：</p>
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">复制</button>
+        <span class="cmd">openclaw</span> onboard --flow quickstart
+      </div>
+    </div>
+  </div>
+
+  <div class="verify-box">
+    <h3>📝 注意事项</h3>
+    <div class="verify-commands">
+      <div class="tip-box">
+        <span class="tip-icon">⚠️</span>
+        <div class="tip-content">
+          <strong>权限问题：</strong>Windows 一定要用管理员 PowerShell 运行，否则可能报错。
+        </div>
+      </div>
+      <div class="tip-box">
+        <span class="tip-icon">🗑️</span>
+        <div class="tip-content">
+          <strong>旧残留：</strong>如果之前安装过，建议先删除 <code>~/.openclaw</code> 文件夹再重新安装。
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- China Mirror Section -->
+<section class="section" id="china">
+  <div class="section-header">
+    <div class="section-label">国内用户专属</div>
+    <h2 class="section-title">🇨🇳 中国大陆安装方案</h2>
+    <p class="section-desc">针对国内网络环境优化的安装方案，解决 GitHub 访问慢或失败的问题</p>
+  </div>
+
+  <div class="mirror-section">
+    <h3 class="mirror-title">🚀 推荐方案 1：国内镜像一键脚本（最快）</h3>
+    <div class="mirror-options">
+      <div class="mirror-card">
+        <div class="mirror-card-title">国内镜像安装 OpenClaw</div>
+        <div class="mirror-card-desc">已优化 npm 源、GitHub 加速，安装成功率高很多</div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">复制</button>
+          <span class="cmd">curl</span> -fsSL https://clawd.org.cn/install.sh | <span class="cmd">bash</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mirror-section">
+    <h3 class="mirror-title">🍺 推荐方案 2：Homebrew 国内镜像</h3>
+    <p class="step-desc">在中国大陆安装 Homebrew 最常见的问题就是官方 GitHub 源访问慢或直接失败。以下是顺畅的安装方法：</p>
+    
+    <div class="mirror-options">
+      <div class="mirror-card">
+        <div class="mirror-card-title">中科大/清华/阿里镜像加速</div>
+        <div class="mirror-card-desc">自动检测系统（Intel/Apple Silicon）、选择国内镜像源、处理权限</div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">复制</button>
+          /bin/zsh -c "$(curl -fsSL https://gitee.com/cunkai/HomebrewCN/raw/master/Homebrew.sh)"
+        </div>
+        <div class="tip-box">
+          <span class="tip-icon">💡</span>
+          <div class="tip-content">
+            运行后会提示选择镜像源，输入 <strong>1（中科大源）</strong>或其他稳定选项，按回车即可。
+          </div>
+        </div>
+      </div>
+      
+      <div class="mirror-card">
+        <div class="mirror-card-title">极速精简版</div>
+        <div class="mirror-card-desc">更快但功能稍简，适合快速安装</div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">复制</button>
+          /bin/zsh -c "$(curl -fsSL https://gitee.com/cunkai/HomebrewCN/raw/master/Homebrew.sh)" speed
+        </div>
+      </div>
+    </div>
+    <p class="step-desc">使用第 1 种一键脚本安装 Homebrew，在中国大陆正常网络环境下，整体耗时一般在 <strong>2～8 分钟</strong>左右，大多数用户反馈是 <strong>3～5 分钟</strong>就能完成。</p>
+  </div>
+
+  <div class="mirror-section">
+    <h3 class="mirror-title">⚙️ 推荐方案 3：最稳妥的分步安装</h3>
+    <p class="step-desc">适合有 Homebrew 且想完全掌控安装过程的用户：</p>
+    
+    <div class="step-container">
+      <div class="step-card" data-animate>
+        <div class="step-header">
+          <div class="step-number">1</div>
+          <h3 class="step-title">确保 Homebrew 已安装并切换到国内源</h3>
+        </div>
+        <p class="step-desc">使用之前用过的中科大/清华镜像。</p>
+      </div>
+
+      <div class="step-card" data-animate>
+        <div class="step-header">
+          <div class="step-number">2</div>
+          <h3 class="step-title">安装 Node.js（必须 ≥22）</h3>
+        </div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">复制</button>
+          <span class="cmd">brew</span> install node@22
+        </div>
+        <p class="step-desc">然后把 Node 加到 PATH（Apple Silicon 通常是）：</p>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">复制</button>
+          <span class="keyword">echo</span> 'export PATH="/opt/homebrew/opt/node@22/bin:$PATH"' >> ~/.zshrc<br>
+          <span class="cmd">source</span> ~/.zshrc
+        </div>
+      </div>
+
+      <div class="step-card" data-animate>
+        <div class="step-header">
+          <div class="step-number">3</div>
+          <h3 class="step-title">配置国内 npm 镜像</h3>
+        </div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">复制</button>
+          <span class="cmd">npm</span> config set registry https://registry.npmmirror.com
+        </div>
+      </div>
+
+      <div class="step-card" data-animate>
+        <div class="step-header">
+          <div class="step-number">4</div>
+          <h3 class="step-title">安装 OpenClaw</h3>
+        </div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">复制</button>
+          <span class="cmd">npm</span> install -g openclaw@latest
+        </div>
+      </div>
+
+      <div class="step-card" data-animate>
+        <div class="step-header">
+          <div class="step-number">5</div>
+          <h3 class="step-title">运行初始化向导</h3>
+        </div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">复制</button>
+          <span class="cmd">openclaw</span> onboard
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mirror-section">
+    <h3 class="mirror-title">🔧 已有 Homebrew 配置国内镜像加速</h3>
+    <p class="step-desc">如果已有 Homebrew，但更新/安装包很慢，配置国内镜像加速能让 brew install、brew update 速度提升 10 倍以上。</p>
+    
+    <div class="method-tabs">
+      <button class="method-tab active" onclick="switchMethodTab(event, 'mirror-ustc')">中科大镜像</button>
+      <button class="method-tab" onclick="switchMethodTab(event, 'mirror-tuna')">清华 TUNA</button>
+    </div>
+    
+    <div class="method-panel active" id="mirror-ustc">
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">复制</button>
+        <span class="comment"># 替换 brew 主仓库</span><br>
+        <span class="cmd">git</span> -C "$(brew --repo)" remote set-url origin https://mirrors.ustc.edu.cn/brew.git<br><br>
+        <span class="comment"># 替换 core 仓库（公式）</span><br>
+        <span class="cmd">git</span> -C "$(brew --repo homebrew/core)" remote set-url origin https://mirrors.ustc.edu.cn/homebrew-core.git<br><br>
+        <span class="comment"># （可选）cask 仓库</span><br>
+        <span class="cmd">git</span> -C "$(brew --repo homebrew/cask)" remote set-url origin https://mirrors.ustc.edu.cn/homebrew-cask.git<br><br>
+        <span class="comment"># 设置 Bottles（预编译二进制包）加速</span><br>
+        <span class="keyword">echo</span> 'export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.ustc.edu.cn/homebrew-bottles' >> ~/.zshrc<br>
+        <span class="cmd">source</span> ~/.zshrc
+      </div>
+    </div>
+    
+    <div class="method-panel" id="mirror-tuna">
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">复制</button>
+        <span class="cmd">git</span> -C "$(brew --repo)" remote set-url origin https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git<br><br>
+        <span class="cmd">git</span> -C "$(brew --repo homebrew/core)" remote set-url origin https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/homebrew-core.git<br><br>
+        <span class="cmd">git</span> -C "$(brew --repo homebrew/cask)" remote set-url origin https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/homebrew-cask.git<br><br>
+        <span class="keyword">echo</span> 'export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles' >> ~/.zshrc<br>
+        <span class="keyword">echo</span> 'export HOMEBREW_API_DOMAIN=https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles/api' >> ~/.zshrc<br>
+        <span class="cmd">source</span> ~/.zshrc
+      </div>
+    </div>
+    
+    <p class="step-desc">配置后运行 <code>brew update</code> 测试速度。以后每次新开终端记得 <code>source ~/.zshrc</code>（或重启终端）。</p>
+  </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="section" id="faq" style="background: var(--bg-secondary); max-width: 100%; padding-left: calc((100% - 1200px)/2 + 2rem); padding-right: calc((100% - 1200px)/2 + 2rem);">
+  <div class="section-header">
+    <div class="section-label">FAQ</div>
+    <h2 class="section-title">❓ 常见问题</h2>
+    <p class="section-desc">安装过程中可能遇到的问题及解决方案</p>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question" onclick="toggleFAQ(this)">
+      <span>curl 安装命令在国内能顺利执行吗？</span>
+      <span class="arrow">▼</span>
+    </button>
+    <div class="faq-answer">
+      <p>官方命令 <code>curl -fsSL https://openclaw.ai/install.sh | bash</code> 在国内可能因网络问题失败。建议使用国内镜像：<code>curl -fsSL https://clawd.org.cn/install.sh | bash</code>，或采用分步安装方案。</p>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question" onclick="toggleFAQ(this)">
+      <span>安装完成后命令找不到（command not found）</span>
+      <span class="arrow">▼</span>
+    </button>
+    <div class="faq-answer">
+      <p>安装完后关闭 Terminal/PowerShell，重新打开一次让环境变量生效。如果仍有问题，检查 Node.js 是否正确安装：<code>node --version</code></p>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question" onclick="toggleFAQ(this)">
+      <span>如何完全重置/卸载 OpenClaw？</span>
+      <span class="arrow">▼</span>
+    </button>
+    <div class="faq-answer">
+      <p>删除配置目录：<code>rm -rf ~/.openclaw</code>（macOS/Linux）或删除对应的 Windows 配置文件夹。然后可以重新运行安装命令。</p>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question" onclick="toggleFAQ(this)">
+      <span>一键脚本安装失败怎么办？</span>
+      <span class="arrow">▼</span>
+    </button>
+    <div class="faq-answer">
+      <p>可以使用 npm 手动安装：</p>
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">复制</button>
+        <span class="cmd">npm</span> install -g openclaw@latest<br>
+        <span class="cmd">openclaw</span> onboard
+      </div>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question" onclick="toggleFAQ(this)">
+      <span>需要准备什么 API Key？</span>
+      <span class="arrow">▼</span>
+    </button>
+    <div class="faq-answer">
+      <p>支持以下任意一种：OpenAI（ChatGPT）、Anthropic（Claude）、Grok（xAI）、通义千问（Qwen）等。在 onboarding 向导中选择你的提供商并填入 API Key。</p>
+    </div>
+  </div>
+
+  <div class="verify-box" style="margin-top: 3rem;">
+    <h3>🎉 安装完成！</h3>
+    <p style="color: var(--text-secondary); margin-top: 0.5rem;">
+      现在你可以通过配置的聊天渠道（Telegram / Web / WhatsApp 等）与你的 AI 助手对话了。
+    </p>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <p>OpenClaw 安装指南 · 2025 最新版</p>
+</footer>
+
+<!-- Back to Top -->
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">↑</button>
+
+<script>
+// ========== Particles ==========
+(function() {
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 25; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDuration = (8 + Math.random() * 12) + 's';
+    p.style.animationDelay = Math.random() * 10 + 's';
+    p.style.width = p.style.height = (2 + Math.random() * 3) + 'px';
+    const colors = ['rgba(59,130,246,0.5)', 'rgba(6,182,212,0.4)', 'rgba(139,92,246,0.3)'];
+    p.style.background = colors[Math.floor(Math.random() * colors.length)];
+    container.appendChild(p);
+  }
+})();
+
+// ========== Navigation ==========
+const nav = document.getElementById('nav');
+const navToggle = document.getElementById('navToggle');
+const navLinks = document.getElementById('navLinks');
+
+navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// ========== Progress Bar ==========
+const progressBar = document.getElementById('progressBar');
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  progressBar.style.width = (scrollTop / docHeight * 100) + '%';
+});
+
+// ========== Back to Top ==========
+const backTop = document.getElementById('backTop');
+window.addEventListener('scroll', () => {
+  backTop.classList.toggle('visible', window.scrollY > 500);
+});
+
+// ========== OS Switcher ==========
+function switchOS(os) {
+  document.querySelectorAll('.os-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.os-panel').forEach(panel => panel.classList.remove('active'));
+  event.target.closest('.os-btn').classList.add('active');
+  document.getElementById('panel-' + os).classList.add('active');
+}
+
+// ========== Method Tabs ==========
+function switchMethodTab(e, tabId) {
+  document.querySelectorAll('.method-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.method-panel').forEach(p => p.classList.remove('active'));
+  e.target.classList.add('active');
+  document.getElementById(tabId).classList.add('active');
+}
+
+// ========== FAQ Toggle ==========
+function toggleFAQ(btn) {
+  const answer = btn.nextElementSibling;
+  const isOpen = answer.classList.contains('open');
+  document.querySelectorAll('.faq-answer.open').forEach(el => {
+    el.classList.remove('open');
+    el.previousElementSibling.classList.remove('active');
+  });
+  if (!isOpen) {
+    answer.classList.add('open');
+    btn.classList.add('active');
+  }
+}
+
+// ========== Copy Code ==========
+function copyCode(btn) {
+  const block = btn.parentElement;
+  const text = block.textContent.replace('复制', '').trim();
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '已复制 ✓';
+    setTimeout(() => btn.textContent = '复制', 2000);
+  });
+}
+
+// ========== Scroll Animations ==========
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+document.querySelectorAll('[data-animate]').forEach(el => observer.observe(el));
+
+// ========== Smooth scroll for anchor links ==========
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      const offset = 80;
+      const top = target.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+  });
+});
+</script>
+</body>
+</html>
